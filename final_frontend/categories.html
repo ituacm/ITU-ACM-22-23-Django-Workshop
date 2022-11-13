@@ -1,0 +1,51 @@
+{% extends "_base.html" %}
+
+{% load static %}
+
+<!-- catagory section -->
+{% block content %}
+<section class="catagory_section layout_padding">
+  <div class="catagory_container">
+    <div class="heading_container heading_center">
+      <h2>
+        Search Books
+      </h2>
+      <p>
+        There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration
+      </p>
+    </div>
+    <div class="container">
+      <div class="container w-50 mb-5">
+        <form class="search_form" action="{% url 'searchBook' %}" method="POST">
+          {% csrf_token %}
+          <input type="text" name="bookName" class="form-control bg-light" placeholder="Search here...">
+          <button class="bg-info" type="submit">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </button>
+        </form>
+      </div>
+
+      <div class="heading_container heading_center">
+        <h3 class="mb-3">
+          Most Read Books
+        </h3>
+      </div>
+      {% for book in most_read_books %}
+      <div class="row">
+        <div class="col-sm-6 col-md-4 mb-3">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">{{ book.name }}</h5>
+              <p class="card-text">{{ book.description }}</p>
+              <a href="{% url 'book' book.idx %}" class="btn btn-primary">Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  </div>
+</section>
+<!-- end catagory section -->
+{% endblock %}
