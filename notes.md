@@ -61,6 +61,8 @@ def contact(request):
 
 Bütün kaynaklar (CSS, JS, resimler) static olarak yüklenmelidir. Örneğin aşağıdaki gibi bir değişiklik yapılmalıdır:
 
+HTML dosyasının başına `{% load static %}` yazıldıktan sonra,
+
 `<img src="images/slider-img.png" alt="">` -> `<img src="{% static 'images/slider-img.png' %}" alt="">`
 
 Referans linkleri (href) için ise aşağıdaki gibi bir değişiklik yapılmalıdır:
