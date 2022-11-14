@@ -19,7 +19,9 @@ Daha sonra dıştaki `book_platform` klasörünün adı karışıklık olmaması
 ```
 from . import views
 
-path("", views.index, name="index")
+urlpatterns = [
+    path("", views.index, name="index")
+]
 ```
 ### views.py
 ```
