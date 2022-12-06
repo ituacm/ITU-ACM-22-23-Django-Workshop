@@ -1,0 +1,59 @@
+{% extends "_base.html" %}
+
+{% block content %}
+<section class="about_section layout_padding">
+  <div class="container ">
+    <div class="row">
+      <div class="col-md-5">
+      </div>
+      <div class="col-md-5">
+        <div class="detail-box">
+          <div class="heading_container">
+            <h2>
+              {{ book.name }}
+            </h2>
+          </div>
+          <p>
+            {{ book.description }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="heading_container heading_center">
+  <h3 class="mb-3">
+    Comments
+  </h3>
+</div>
+<div class="row d-flex justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+      <div class="card-body p-4">
+        <div class="form-outline mb-4">
+          <form class="" action="{% url 'sendComment' %}" method="POST">
+            {% csrf_token %}
+            {{ comment_form }}
+            <input type="hidden" name="book_id" value={{ book.idx }}>
+            <button class="bg-info" type="submit">Send</button>
+          </form>
+        </div>
+
+        {% for comment in comments %}
+        <div class="card">
+          <div class="card-body">
+            <p>{{ comment.comment }}</p>
+
+            <div class="d-flex justify-content-between">
+              <div class="d-flex flex-row align-items-center">
+                <p class="small mb-0 ms-2">{{ comment.username }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

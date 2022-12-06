@@ -1,0 +1,27 @@
+{% extends "_base.html" %}
+
+{% load static %}
+
+{% block content %}
+<section class="about_section layout_padding">
+  <div class="container ">
+    <div class="row">
+      <div class="col-md-5">
+      </div>
+      <div class="col-md-5">
+        <div class="detail-box">
+          <div class="heading_container">
+            <h2>
+              {{ author.name }}
+            </h2>
+          </div>
+          <p>
+            {{ author.description }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+{% endblock %}
