@@ -1,4 +1,6 @@
 ## Django'nun yüklenmesi ve projenin oluşturulması
+`pip install pipenv`
+
 `pipenv shell`
 
 `pip install django`
@@ -161,7 +163,6 @@ class Book(models.Model):
     name = models.CharField(blank=False, max_length=50)
     description = models.CharField(max_length=1000)
     author = models.ForeignKey(Author, related_name="books", on_delete=models.CASCADE)
-    read_count = models.IntegerField(default=0)
 ```
 
 Yukarıda, `AutoField`'in görevi, yeni bir kayıt eklendiğinde indeksin otomatik olarak artmasını sağlamaktır, böylece her kayda erişilebilir. `Primary key` olarak verilmesinin sebebi ise bir kayda erişeceğimiz zaman indeksini vererek erişebilmektir.
@@ -267,9 +268,9 @@ Burada, yukarıda `name="bookName"` ile belirttiğimiz parametrenin okunması, a
 {% endblock %}
 ```
 
-Burada view'da girilen arama texti (`searchText`) yazdırıldı ve her bir kitap bir for döngüsü ile yazdırıldı.
+Burada view'da girilen arama texti (`searchText`) ve her bir kitap yazdırıldı.
 
-### En çok okunan kitapların listelenmesi
+### Kitapların listelenmesi
 
 `categories.html` dosyası aşağıdaki şekilde olmalıdır:
 
@@ -306,7 +307,7 @@ Burada view'da girilen arama texti (`searchText`) yazdırıldı ve her bir kitap
           Most Read Books
         </h3>
       </div>
-      {% for book in most_read_books %}
+      {% for book in books %}
       <div class="row">
         <div class="col-sm-6 col-md-4 mb-3">
           <div class="card" style="width: 18rem;">
@@ -327,17 +328,17 @@ Burada view'da girilen arama texti (`searchText`) yazdırıldı ve her bir kitap
 {% endblock %}
 ```
 
-`book_platform/views.py` dosyasında ise `categories` viewi aşağıdaki şekilde olmalıdır:
+`book_platform/views.py` dosyasında ise `categories` view'i aşağıdaki şekilde olmalıdır:
 
 ```
 from books.models import Book, Author
 
 def categories(request):
-    most_read_books = Book.objects.order_by("-read_count")[0:3]
-    return render(request, 'categories.html', context={"most_read_books": most_read_books})
+    books = Book.objects.all()[0:3]
+    return render(request, 'categories.html', context={'books': books})
 ```
 
-Burada kitaplar okunma sayısına göre azalan şekilde sıralanarak en çok okunan 3 kitap elde edilip template'e gönderilmiştir.
+Burada 3 kitap elde edilip template'e gönderilmiştir.
 
 ### Tekil kitap ve yazar sayfalarının oluşturulması
 `books/views.py` dosyasındaki `book` view'i aşağıdaki şekilde düzenlenir:
@@ -417,7 +418,7 @@ def author(request, id):
 {% endblock %}
 ```
 
-### Kitap yorumlarının oluşturulması
+### Kitap yorumlarının eklenmesi
 
 `books/models.py` dosyasına aşağıdaki model eklenir:
 
@@ -486,7 +487,7 @@ class CommentForm(forms.Form):
     comment = forms.CharField(label='Comment', max_length=500)
 ```
 
-`books/views.py` dosyasında book viewi aşağıdaki şekilde değiştirilir:
+`books/views.py` dosyasında book view'i aşağıdaki şekilde değiştirilir:
 
 ```
 from .forms import CommentForm
@@ -498,7 +499,7 @@ def book(request, id):
 
 ```
 
-Yorum POST request ile gönderildiğinde bu isteği alacak view de aynı dosyada yazılır:
+Yorum POST request ile gönderildiğinde bu isteği alacak view de yazılır:
 
 ```
 from .models import BookComment
