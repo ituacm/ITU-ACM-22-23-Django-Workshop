@@ -1,13 +1,13 @@
 # ITU-ACM-22-23-Django-Workshop
 
 ## Summary
-Main goal is to let the participants finish and deploy their Django project by the end of the workshop.
+Main goal is to show the participants how Django works by developing an application on it.
 
-There will be a front-end template (book platform) on hand, and a web application will be built upon it.
+There will be a front-end template (book platform) on hand, and the web application will be built upon it.
 ### Planned Features to Add:
-- Listing the books from the database
-- Searching the books
-- Author pages
+- Listing books from database
+- Searching books
+- Book pages, author pages
 
 
 ## Prerequisites
