@@ -7,7 +7,7 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html
 Ana app'imizde (book_platform klasörü) bulunan settings.py dosyasında birkaç değişiklik yapmalıyız.
 
 ### DEBUG
-`DEBUG` değişkeni yalnızca projeyi geliştirirken `True` olmalıdır. Bu nedenle `DEBUG = False` olmalıdır.
+`DEBUG` değişkeni yalnızca projeyi geliştirirken `True` olmalıdır. Proje canlıya çıkacağı için `DEBUG = False` yapmalıyız.
 
 ### ALLOWED_HOSTS
 Projemizi çıkaracağımız domain adını veya domainimiz yoksa IP'sini `ALLOWED_HOSTS` listesine eklemeliyiz. Örneğin:
@@ -18,10 +18,10 @@ Projemizi çıkaracağımız domain adını veya domainimiz yoksa IP'sini `ALLOW
 Static dosyaların servis edilmesi için tek bir klasörde toplanması gerekmektedir. Hangi klasörde toplanacağını belirtmemiz gerekmektedir. Bunun için aşağıdaki satır `settings.py`'a eklenmelidir:
 
 ```
-STATIC_ROOT = BASE_DIR / "statics"
+STATIC_ROOT = BASE_DIR / "collected_statics"
 ```
 
-Daha sonra static dosyaları toplamak için `python manage.py collectstatic` komutunu kullanabiliriz.
+Daha sonra static dosyaları toplamak için `python manage.py collectstatic` komutunu kullanabiliriz. Yeni static dosyaları eklediğimiz ve tekrar deployment yapacağımız zaman bu komutu tekrar çalıştırmalıyız.
 
 ## WSGI
 Django, production'da (canlıda) kullanılmaya uygun bir webserver içermediğinden dolayı, kendi webserverimizi (Apache veya Nginx) kurup projemizi bu webserver'a bağlamalıyız. Fakat bir webserver kursak bile bu webserver Python kodunu okuyamaz. Bunun üstesinden gelmek için WSGI (Webserver Gateway Interface) denilen arayüzleri kullanabiliriz. `Gunicorn` bu arayüzlerden birisidir. Ayrıca Gunicorn, webserver yazılımlarının (Apache ve Nginx) özelliklerinden bazılarına sahip olduğu için, webserver kullanmadan direkt Gunicorn kullanmak da küçük projeler için yeterlidir, fakat biz webserver da kuracağız. Aşağıdaki şema özetlemektedir:
@@ -70,25 +70,25 @@ Aşağıdaki komut ile izin verilir:
     
 ### Nginx'te Static Dosyaların Servis Edilmesi
 Django çalışırken static dosyalarımızı `http://<domainimiz>/static` adresinde arayacaktır. Bu nedenle Nginx'te `/static` dizinini az önce Django'da topladığımız static dosyaların bulunduğu path'e yönlendirmeliyiz. Bunun için 
-`/etc/nginx/sites-enabled/default` dosyasını admin izinleriyle açıp `server` altına aşağıdaki ayarı kopyalayıp dizini değiştirmeliyiz:
+`/etc/nginx/sites-enabled/default` dosyasını admin izinleriyle (sudo) açıp `server` bloğunun altına aşağıdaki ayarı kopyalayıp dizini değiştirmeliyiz:
 
 ```
 location /static/ {
-	alias <static dosyaların toplandığı dizin>;
+    alias <static dosyaların toplandığı dizin>;
 }
 ```
 
 ### Gunicorn'un Çalıştırılması
-Django projemiz ve web sunucumuz hazır olduğuna göre sıra bu ikisini bağlamaya geldi.
+Django tarafı ve webserver tarafı hazır olduğuna göre sıra WSGI aracılığıyla bu ikisini bağlamaya geldi.
 
-Django proje klasörüne girdikten sonra (manage.py dosyasının olduğu klasör) `gunicorn book_platform.wsgi` komutu girilir.
+Django proje klasörüne girdikten sonra (manage.py dosyasının olduğu klasör) `gunicorn book_platform.wsgi` komutu girilir. Bu komutla birlikte Django ile WSGI'yi (Gunicorn) bağlamış oluyoruz.
 
 ### Nginx ile Gunicorn'un Bağlanması
-Şimdi ise Nginx ile Gunicorn'u bağlamalıyız. Bunun için sitemizin `/` dizinini Gunicorn'un çalıştığı adrese yönlendireceğiz. Yine `/etc/nginx/sites-enabled/default` dosyasında `server` altına aşağıdaki ayarı da kopyalıyoruz:
+Şimdi ise Nginx ile Gunicorn'u bağlamalıyız. Bunun için sitemizin `/` dizinini Gunicorn'un çalıştığı adrese (`127.0.0.1:8000`) yönlendireceğiz. Yine `/etc/nginx/sites-enabled/default` dosyasında `server` altına aşağıdaki ayarı da kopyalıyoruz:
 
 ```
 location / {
-	proxy_pass http://127.0.0.1:8000;
+      proxy_pass http://127.0.0.1:8000;
       proxy_set_header X-Forwarded-Host $server_name;
       proxy_set_header X-Real-IP $remote_addr;
       proxy_redirect off;
@@ -107,7 +107,7 @@ server {
         listen [::]:80 default_server;
 
         location /static/ {
-            alias /home/user/django-project/book_platform_con/statics/;
+            alias /home/user/django-project/book_platform_con/collected_statics/;
         }
 
         location / {
@@ -184,7 +184,7 @@ server {
 
 Ayarları yaptıktan sonra Nginx'i yeniden başlatmamız gerekmektedir. Bunun için `sudo systemctl restart nginx` komutunu giriyoruz.
 
-Ekstra bilgi olarak: Nginx ile sunacağımız sitemizin içeriği normalde `/var/www/html` klasöründe bulunur. Fakat biz Django kullandığımız için bu klasör ile bir işimiz yok.
+Ekstra bilgi olarak: Nginx ile sunacağımız sitemizin içeriği default olarak `/var/www/html` klasöründe bulunur. Fakat biz framework kullandığımız için bu klasör ile bir işimiz olmayacak.
 
 ## (Opsiyonel) Gunicorn'un Servis Olarak Eklenmesi
 Şu anda Gunicorn çalıştıkça sitemiz de çalışıyor halde olacaktır. Fakat Gunicorn şu anda arka planda çalışması gerekirken normal şekilde çalışıyor. Arka planda çalışmasını sağlarsak sunucumuz her başladığında Gunicorn da başlar ve manuel olarak çalıştırmamıza gerek kalmaz. Linux'ta servis oluşturmak için aşağıdaki linki inceleyebilirsiniz:
