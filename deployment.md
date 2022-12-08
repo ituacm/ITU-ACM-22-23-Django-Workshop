@@ -81,7 +81,7 @@ location /static/ {
 ### Gunicorn'un Çalıştırılması
 Django projemiz ve web sunucumuz hazır olduğuna göre sıra bu ikisini bağlamaya geldi.
 
-Django proje klasörüne girdikten sonra (manage.py dosyasının olduğu klasör) `gunicorn book_platform.wsgi` komutu girilir. Bu komutta, projemizin WSGI için export edildiği dosyayı (wsgi.py), Gunicorn'a belirtiyoruz. Bu dosyayı Django kendisi oluşturduğu için bir değişiklik yapmamıza gerek yoktur.
+Django proje klasörüne girdikten sonra (manage.py dosyasının olduğu klasör) `gunicorn book_platform.wsgi` komutu girilir.
 
 ### Nginx ile Gunicorn'un Bağlanması
 Şimdi ise Nginx ile Gunicorn'u bağlamalıyız. Bunun için sitemizin `/` dizinini Gunicorn'un çalıştığı adrese yönlendireceğiz. Yine `/etc/nginx/sites-enabled/default` dosyasında `server` altına aşağıdaki ayarı da kopyalıyoruz:
@@ -186,7 +186,7 @@ Ayarları yaptıktan sonra Nginx'i yeniden başlatmamız gerekmektedir. Bunun i�
 
 Ekstra bilgi olarak: Nginx ile sunacağımız sitemizin içeriği normalde `/var/www/html` klasöründe bulunur. Fakat biz Django kullandığımız için bu klasör ile bir işimiz yok.
 
-## Gunicorn'un Servis Olarak Eklenmesi
+## (Opsiyonel) Gunicorn'un Servis Olarak Eklenmesi
 Şu anda Gunicorn çalıştıkça sitemiz de çalışıyor halde olacaktır. Fakat Gunicorn şu anda arka planda çalışması gerekirken normal şekilde çalışıyor. Arka planda çalışmasını sağlarsak sunucumuz her başladığında Gunicorn da başlar ve manuel olarak çalıştırmamıza gerek kalmaz. Linux'ta servis oluşturmak için aşağıdaki linki inceleyebilirsiniz:
 
 https://linuxhandbook.com/create-systemd-services
