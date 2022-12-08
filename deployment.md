@@ -1,5 +1,5 @@
 # Projenin Canlıya Alınması (Deployment)
-Projeyi canlıya almak için bir Linux sunucusuna ihtiyacımız var. Amazon Web Services (AWS), kayıt olduktan sonra 12 ay boyunca ücretsiz sunucu kullanılması imkanını sağlıyor (EC2 instance-free tier). Aşağıdaki adımları oradan bir instance oluşturup uygulayabilirsiniz.
+Projeyi canlıya almak için bir Linux sunucusuna ihtiyacımız var (buradaki tüm adımlar Ubuntu 20.04 üzerinde denenmiştir). Amazon Web Services (AWS), kayıt olduktan sonra 12 ay boyunca ücretsiz sunucu kullanılması imkanını sağlıyor (EC2 instance-free tier). Aşağıdaki adımları oradan bir instance oluşturup uygulayabilirsiniz.
 
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html
 
